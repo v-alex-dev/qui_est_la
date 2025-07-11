@@ -9,11 +9,19 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    safelist: [
+        'text-blue-800',
+        'bg-blue-100',
+        'text-green-800',
+        'bg-green-100',
+    ],
+
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            
         },
     },
 
