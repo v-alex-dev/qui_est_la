@@ -13,7 +13,7 @@ Application de gestion des visiteurs pour entreprise.
 ## Installation
 
 ```bash
-git clone <repo>
+git clone https://github.com/v-alex-dev/qui_est_la
 cd qui_est_la
 composer install
 cp .env.example .env
@@ -44,8 +44,8 @@ php artisan serve
 
 ## Admin
 
-- `/admin/presences` : Présences en live
+- `/admin/dashboard` : Acceuil dashboard
 
 ## Auteurs
 
-- Prénom Nom — email@domaine.com
+- Vens Alexandre
