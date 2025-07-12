@@ -4,17 +4,12 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Training;
+use App\Models\StaffMember;
 use App\Models\Visit;
 use Illuminate\Http\Request;
 
 class AdminDataController extends Controller
 {
-    //
-    public function index()
-    {
-        return view('admin.data');
-    }
-
     public function dashboard()
     {
         $today = now()->toDateString();
