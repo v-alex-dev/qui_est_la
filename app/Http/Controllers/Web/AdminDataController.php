@@ -48,4 +48,114 @@ class AdminDataController extends Controller
 
         return view('admin.dashboard', compact('entries'));
     }
+
+    public function manageData()
+    {
+        $staffMembers = StaffMember::orderBy('last_name')->get();
+        $trainings = Training::with('staffMember')->orderBy('date', 'desc')->get();
+        $allStaffMembers = StaffMember::orderBy('last_name')->get(); // Pour le dropdown des formations
+
+        return view('admin.manage-data', compact('staffMembers', 'trainings', 'allStaffMembers'));
+    }
+
+    // Méthodes pour le personnel
+    public function storeStaff(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'function' => 'required|in:formateur,administration',
+            'room' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:255',
+        ]);
+
+        StaffMember::create($request->all());
+
+        return redirect()->route('admin.manage-data', ['tab' => 'staff'])
+            ->with('success', 'Membre du personnel ajouté avec succès');
+    }
+
+    public function editStaff(StaffMember $staff)
+    {
+        $allStaffMembers = StaffMember::orderBy('last_name')->get();
+        $trainings = Training::with('staffMember')->orderBy('date', 'desc')->get();
+
+        return view('admin.manage-data', compact('staff', 'allStaffMembers', 'trainings'))
+            ->with('editingStaff', true)
+            ->with('tab', 'staff');
+    }
+
+    public function updateStaff(Request $request, StaffMember $staff)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'function' => 'required|in:formateur,administration',
+            'room' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:255',
+        ]);
+
+        $staff->update($request->all());
+
+        return redirect()->route('admin.manage-data', ['tab' => 'staff'])
+            ->with('success', 'Membre du personnel modifié avec succès');
+    }
+
+    public function destroyStaff(StaffMember $staff)
+    {
+        $staff->delete();
+
+        return redirect()->route('admin.manage-data', ['tab' => 'staff'])
+            ->with('success', 'Membre du personnel supprimé avec succès');
+    }
+
+    // Méthodes pour les formations
+    public function storeTraining(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'date' => 'required|date',
+            'room' => 'required|string|max:255',
+            'staff_member_id' => 'required|exists:staff_members,id',
+        ]);
+
+        Training::create($request->all());
+
+        return redirect()->route('admin.manage-data', ['tab' => 'formations'])
+            ->with('success', 'Formation ajoutée avec succès');
+    }
+
+    public function editTraining(Training $training)
+    {
+        $staffMembers = StaffMember::orderBy('last_name')->get();
+        $allStaffMembers = StaffMember::orderBy('last_name')->get();
+        $trainings = Training::with('staffMember')->orderBy('date', 'desc')->get();
+
+        return view('admin.manage-data', compact('training', 'staffMembers', 'allStaffMembers', 'trainings'))
+            ->with('editingTraining', true)
+            ->with('tab', 'formations');
+    }
+
+    public function updateTraining(Request $request, Training $training)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'date' => 'required|date',
+            'room' => 'required|string|max:255',
+            'staff_member_id' => 'required|exists:staff_members,id',
+        ]);
+
+        $training->update($request->all());
+
+        return redirect()->route('admin.manage-data', ['tab' => 'formations'])
+            ->with('success', 'Formation modifiée avec succès');
+    }
+
+    public function destroyTraining(Training $training)
+    {
+        $training->delete();
+
+        return redirect()->route('admin.manage-data', ['tab' => 'formations'])
+            ->with('success', 'Formation supprimée avec succès');
+    }
 }
