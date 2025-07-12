@@ -38,7 +38,7 @@ class AdminDataController extends Controller
                 'type' => 'formation',
                 'name' => $training->title,
                 'info' => $training->staffMember ? ($training->staffMember->first_name . ' ' . $training->staffMember->last_name) : '-',
-                'local' => $training->local ?? '-',
+                    'local' => $training->room ?? '-',
                 'time' => $training->date,
             ];
         });
