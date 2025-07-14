@@ -23,3 +23,5 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      - key: VITE_APP_NAME
+        value: "Qui est là"
