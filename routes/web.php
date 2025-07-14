@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     // Page de gestion des données (onglets)
     Route::get('/dashboard', [AdminDataController::class, 'dashboard'])->name('dashboard');
+    Route::get('/history', [AdminDataController::class, 'history'])->name('history');
     Route::get('/manage-data', [AdminDataController::class, 'manageData'])->name('manage-data');
 
     // Formations
