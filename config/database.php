@@ -97,6 +97,8 @@ return [
             'sslmode' => env('DB_SSLMODE', 'require'),
             'options' => extension_loaded('pdo_pgsql') ? array_filter([
                 PDO::PGSQL_ATTR_DISABLE_PREPARES => true,
+                PDO::ATTR_TIMEOUT => 60,
+                PDO::ATTR_PERSISTENT => false,
             ]) : [],
         ],
 

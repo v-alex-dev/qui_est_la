@@ -59,12 +59,8 @@ RUN echo '<VirtualHost *:80>\n\
   CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
   </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# Copy and make start script executable
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
-
 # Expose port 80
 EXPOSE 80
 
-# Start with our custom script
-CMD ["/usr/local/bin/start.sh"]
+# Start Apache
+CMD ["apache2-foreground"]
