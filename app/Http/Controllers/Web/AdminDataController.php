@@ -15,16 +15,33 @@ class AdminDataController extends Controller
         $today = now()->toDateString();
 
         // visiteurs présents aujourd'hui
-        $visits = Visit::with('visitor')
+        $visits = Visit::with(['visitor', 'staffMember', 'training'])
             ->whereDate('entered_at', $today)
             ->whereNull('exited_at')
             ->get()
             ->map(function ($visit) {
+                // Déterminer le motif de la visite et l'info à afficher
+                $visitInfo = '';
+                $local = '';
+                if ($visit->staff_member_id && $visit->staffMember) {
+                    $visitInfo = 'Rendez-vous avec ' . $visit->staffMember->first_name . ' ' . $visit->staffMember->last_name;
+                    $local = $visit->staffMember->room;
+                } elseif ($visit->training_id && $visit->training) {
+                    $visitInfo = 'Formation: ' . $visit->training->title;
+                    $local = $visit->training->room ?? '-';
+                } else {
+                    $visitInfo = $visit->purpose ?? 'Visite générale';
+                }
+
+
+
+
                 return [
                     'type' => 'visiteur',
                     'name' => $visit->visitor->first_name . ' ' . $visit->visitor->last_name,
-                    'info' => $visit->visitor->email,
-                    'local' => $visit->local ?? '-',
+                    'email' => $visit->visitor->email,
+                    'info' => $visitInfo,
+                    'local' => $local,
                     'time' => $visit->entered_at,
                 ];
             });
