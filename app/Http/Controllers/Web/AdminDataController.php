@@ -15,16 +15,33 @@ class AdminDataController extends Controller
         $today = now()->toDateString();
 
         // visiteurs présents aujourd'hui
-        $visits = Visit::with('visitor')
+        $visits = Visit::with(['visitor', 'staffMember', 'training'])
             ->whereDate('entered_at', $today)
             ->whereNull('exited_at')
             ->get()
             ->map(function ($visit) {
+                // Déterminer le motif de la visite et l'info à afficher
+                $visitInfo = '';
+                $local = '';
+                if ($visit->staff_member_id && $visit->staffMember) {
+                    $visitInfo = 'Rendez-vous avec ' . $visit->staffMember->first_name . ' ' . $visit->staffMember->last_name;
+                    $local = $visit->staffMember->room;
+                } elseif ($visit->training_id && $visit->training) {
+                    $visitInfo = 'Formation: ' . $visit->training->title;
+                    $local = $visit->training->room ?? '-';
+                } else {
+                    $visitInfo = $visit->purpose ?? 'Visite générale';
+                }
+
+
+
+
                 return [
                     'type' => 'visiteur',
                     'name' => $visit->visitor->first_name . ' ' . $visit->visitor->last_name,
-                    'info' => $visit->visitor->email,
-                    'local' => $visit->local ?? '-',
+                    'email' => $visit->visitor->email,
+                    'info' => $visitInfo,
+                    'local' => $local,
                     'time' => $visit->entered_at,
                 ];
             });
@@ -157,5 +174,68 @@ class AdminDataController extends Controller
 
         return redirect()->route('admin.manage-data', ['tab' => 'formations'])
             ->with('success', 'Formation supprimée avec succès');
+    }
+
+    public function history()
+    {
+
+        // Récupérer tous les visiteurs
+        $visits = Visit::with(['visitor', 'staffMember', 'training'])
+            ->orderBy('entered_at', 'desc')
+            ->get()
+            ->map(function ($visit) {
+                // Déterminer le motif de la visite et l'info à afficher
+                $visitInfo = '';
+                $local = '';
+                if ($visit->staff_member_id && $visit->staffMember) {
+                    $visitInfo = 'Rendez-vous avec ' . $visit->staffMember->first_name . ' ' . $visit->staffMember->last_name;
+                    $local = $visit->staffMember->room;
+                } elseif ($visit->training_id && $visit->training) {
+                    $visitInfo = 'Formation: ' . $visit->training->title;
+                    $local = $visit->training->room ?? '-';
+                } else {
+                    $visitInfo = $visit->purpose ?? 'Visite générale';
+                    $local = '-';
+                }
+
+                return [
+                    'type' => 'visiteur',
+                    'name' => $visit->visitor->first_name . ' ' . $visit->visitor->last_name,
+                    'email' => $visit->visitor->email,
+                    'info' => $visitInfo,
+                    'local' => $local,
+                    'time' => $visit->entered_at,
+                    'date' => \Carbon\Carbon::parse($visit->date)->format('d/m/Y'), // Format de la date pour l'affichage
+                    'exit_time' => $visit->exited_at,
+                    'sort_date' => $visit->entered_at, // Pour le tri
+                ];
+            });
+
+        // Récupérer toutes les formations
+        $trainings = Training::with('staffMember')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->map(function ($training) {
+                return [
+                    'type' => 'formation',
+                    'name' => $training->title,
+                    'email' => '-',
+                    'info' => $training->staffMember ?
+                        'Formateur: ' . $training->staffMember->first_name . ' ' . $training->staffMember->last_name :
+                        'Formateur non assigné',
+                    'local' => $training->room ?? '-',
+                    'time' => null, // Pas d'heure pour les formations
+                    'date' => \Carbon\Carbon::parse($training->date)->format('d/m/Y'),
+                    'exit_time' => null, // Pas d'heure de sortie pour les formations
+                    'sort_date' => \Carbon\Carbon::parse($training->date), // Pour le tri
+                ];
+            });
+
+        // Fusionner et trier par date décroissante (du plus récent au plus ancien)
+        $histories = $visits->concat($trainings)
+            ->sortByDesc('sort_date')
+            ->values(); // Réindexer la collection
+
+        return view('admin.history', compact('histories'));
     }
 }
