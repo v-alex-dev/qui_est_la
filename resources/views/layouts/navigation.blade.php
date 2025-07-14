@@ -17,6 +17,9 @@
                     <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         Présences Live
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.history')" :active="request()->routeIs('admin.history')">
+                        Historique des visites
+                    </x-nav-link>
                     <x-nav-link :href="route('admin.manage-data')" :active="request()->routeIs('admin.manage-data')">
                         Gestion des données
                     </x-nav-link>
@@ -80,6 +83,9 @@
             @if(Auth::check() && Auth::user()->role === 'admin')
             <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 Présences Live
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.history')" :active="request()->routeIs('admin.history')">
+                Historique
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.manage-data')" :active="request()->routeIs('admin.manage-data')">
                 Gestion des données
