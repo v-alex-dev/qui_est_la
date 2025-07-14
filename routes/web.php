@@ -1,14 +1,21 @@
 
 <?php
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Web\AdminDataController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
+    $user = Auth::user();
+    if ($user && $user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -21,6 +28,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     // Page de gestion des données (onglets)
     Route::get('/dashboard', [AdminDataController::class, 'dashboard'])->name('dashboard');
+    Route::get('/history', [AdminDataController::class, 'history'])->name('history');
+    Route::get('/manage-data', [AdminDataController::class, 'manageData'])->name('manage-data');
 
     // Formations
     Route::post('/trainings', [AdminDataController::class, 'storeTraining'])->name('trainings.store');
@@ -34,4 +43,4 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::put('/staff/{staff}', [AdminDataController::class, 'updateStaff'])->name('staff.update');
     Route::delete('/staff/{staff}', [AdminDataController::class, 'destroyStaff'])->name('staff.destroy');
 });
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
