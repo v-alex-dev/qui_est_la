@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install -y \
   libxml2-dev \
   zip \
   unzip \
-  nodejs \
-  npm \
   sqlite3 \
   libsqlite3-dev \
   && docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd
@@ -28,17 +26,22 @@ RUN a2enmod rewrite
 # Copy existing application directory contents with proper ownership
 COPY --chown=www-data:www-data . /var/www/html
 
+# Create necessary directories and set permissions
+RUN mkdir -p /var/www/html/storage/logs \
+  && mkdir -p /var/www/html/storage/framework/cache \
+  && mkdir -p /var/www/html/storage/framework/sessions \
+  && mkdir -p /var/www/html/storage/framework/views \
+  && mkdir -p /var/www/html/bootstrap/cache \
+  && chown -R www-data:www-data /var/www/html/storage \
+  && chown -R www-data:www-data /var/www/html/bootstrap/cache \
+  && chmod -R 775 /var/www/html/storage \
+  && chmod -R 775 /var/www/html/bootstrap/cache
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node.js dependencies and build assets
-RUN npm install && npm run build && rm -rf node_modules
-
-# Set permissions
+# Set final permissions
 RUN chown -R www-data:www-data /var/www/html \
-  && chmod -R 755 /var/www/html/storage \
-  && chmod -R 755 /var/www/html/bootstrap/cache \
-  && chmod -R 755 /var/www/html/database \
   && chmod -R 755 /var/www/html/public \
   && touch /var/www/html/database/database.sqlite \
   && chown www-data:www-data /var/www/html/database/database.sqlite \
