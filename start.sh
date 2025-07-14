@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Copy environment file if it doesn't exist
+if [ ! -f /var/www/html/.env ]; then
+    echo "Creating .env file from .env.example..."
+    cp /var/www/html/.env.example /var/www/html/.env
+fi
+
+# Generate app key if not set
+echo "Checking application key..."
+php artisan key:generate --force
+
+# Clear and cache configurations
+echo "Optimizing Laravel..."
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
 # Créer le fichier de base de données SQLite s'il n'existe pas
 echo "Setting up SQLite database..."
 touch /var/www/html/database/database.sqlite

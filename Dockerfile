@@ -25,23 +25,21 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Copy existing application directory contents
-COPY . /var/www/html
-
-# Copy existing application directory permissions
+# Copy existing application directory contents with proper ownership
 COPY --chown=www-data:www-data . /var/www/html
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
 # Install Node.js dependencies and build assets
-RUN npm install && npm run build
+RUN npm install && npm run build && rm -rf node_modules
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
   && chmod -R 755 /var/www/html/storage \
   && chmod -R 755 /var/www/html/bootstrap/cache \
   && chmod -R 755 /var/www/html/database \
+  && chmod -R 755 /var/www/html/public \
   && touch /var/www/html/database/database.sqlite \
   && chown www-data:www-data /var/www/html/database/database.sqlite \
   && chmod 664 /var/www/html/database/database.sqlite
