@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
   nodejs \
   npm \
   libpq-dev \
+  postgresql-client \
   && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
   && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
