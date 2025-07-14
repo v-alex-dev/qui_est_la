@@ -12,20 +12,12 @@ services:
       - key: APP_KEY
         generateValue: true
       - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_SSLMODE
-        value: require
+        value: sqlite
       - key: LOG_CHANNEL
         value: stderr
       - key: SESSION_DRIVER
-        value: database
+        value: file
       - key: CACHE_STORE
-        value: database
+        value: file
       - key: QUEUE_CONNECTION
-        value: database
-
-databases:
-  - name: qui-est-la-db
-    databaseName: quel_db
-    user: root
-    plan: free
+        value: sync
