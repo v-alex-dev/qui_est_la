@@ -4,4 +4,3 @@ web:
       - 'npm i && npm run build'
     deploy:
       - 'php artisan migrate --force'
-      - 'php artisan db:seed --force'

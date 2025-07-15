@@ -13,17 +13,15 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Créer l'utilisateur admin par défaut
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-            'email_verified_at' => now(),
-        ]);
-
-        $this->command->info('Utilisateur admin créé avec succès !');
-        $this->command->info('Email: admin@example.com');
-        $this->command->info('Mot de passe: admin123');
+        // Créer l'utilisateur admin par défaut seulement s'il n'existe pas
+        if (!User::where('email', 'admin@example.com')->exists()) {
+            User::create([
+                'name' => 'Admin',
+                'email' => 'admin@example.com',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]);
+        }
     }
 }
