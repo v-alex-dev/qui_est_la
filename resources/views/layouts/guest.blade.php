@@ -19,13 +19,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    @if(app()->environment('production'))
-    <!-- Production: Use CDN Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    @else
-    <!-- Development: Use Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @endif
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
