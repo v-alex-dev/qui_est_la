@@ -8,14 +8,4 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    build: {
-        // Ensure assets are built with correct public path
-        outDir: "public/build",
-        emptyOutDir: true,
-        manifest: true,
-        rollupOptions: {
-            // Don't include external dependencies in the bundle
-            external: [],
-        },
-    },
 });
