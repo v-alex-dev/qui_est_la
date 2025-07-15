@@ -21,9 +21,9 @@ class VisitorController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email',
-            'purpose' => 'required|in:visite, formation',
+            'purpose' => 'required|in:visite,formation',
             'staff_member_id' => 'nullable|exists:staff_members,id',
-            'training_id' => 'nullable|exists:trainings, id',
+            'training_id' => 'nullable|exists:trainings,id',
         ]);
 
         $visitor = Visitor::firstOrCreate(
