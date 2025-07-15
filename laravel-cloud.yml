@@ -1,0 +1,14 @@
+name: qui-est-la
+environment: production
+
+build:
+  commands:
+    - npm install
+    - npm run build
+
+deploy:
+  commands:
+    - php artisan migrate --force
+
+web:
+  php_version: 8.2
