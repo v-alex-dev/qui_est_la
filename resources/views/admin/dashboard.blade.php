@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h1 class="text-2xl font-bold mb-6">Présences et formations du jour</h1>
-        <meta http-equiv="refresh" content="30">
+        <meta http-equiv="refresh" content="1800">
     </x-slot>
 
     <div class="py-8">
@@ -24,7 +24,8 @@
                                 Voir l'historique
                             </a>
                             <div class="text-sm text-gray-500">
-                                Dernière mise à jour : {{ now()->format('H:i:s') }}
+                                <p>Dernière mise à jour : {{ now()->format('H:i:s') }} </p>
+                                <p>( Mise à jour automatique toutes les 30 minutes )</p>
                             </div>
                         </div>
                     </div>
