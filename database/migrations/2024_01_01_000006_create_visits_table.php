@@ -15,7 +15,6 @@ return new class extends Migration
             $table->enum('purpose', ['visite', 'formation']);
             $table->timestamp('entered_at');
             $table->timestamp('exited_at')->nullable();
-            $table->string('badge_id')->unique();
             $table->timestamps();
         });
     }

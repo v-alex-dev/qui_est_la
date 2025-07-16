@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,6 @@ class Visit extends Model
         'purpose',
         'entered_at',
         'exited_at',
-        'badge_id',
     ];
 
     public function visitor()
@@ -32,4 +32,4 @@ class Visit extends Model
     {
         return $this->belongsTo(Training::class);
     }
-} 
+}

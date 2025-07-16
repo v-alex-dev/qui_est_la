@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,10 +15,11 @@ class Visitor extends Model
         'last_name',
         'email',
         'last_visited_at',
+        'badge_id',
     ];
 
     public function visits()
     {
         return $this->hasMany(Visit::class);
     }
-} 
+}

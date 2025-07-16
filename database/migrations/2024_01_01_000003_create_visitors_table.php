@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->index();
             $table->timestamp('last_visited_at')->nullable();
+            $table->string('badge_id')->unique();
             $table->timestamps();
         });
     }
