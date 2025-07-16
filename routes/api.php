@@ -8,6 +8,7 @@
     Route::post('/exit', [VisitorController::class, 'exit']);
     Route::post('/return', [VisitorController::class, 'returnVisitor']);
     Route::get('/visitor/search', [VisitorController::class, 'searchByEmail']);
+    Route::get('/visitor/badge', [VisitorController::class, 'getVisitorByBadgeId']);
     Route::get('/staff-members', [VisitorController::class, 'getStaffMembers']);
     Route::get('/trainings/today', [VisitorController::class, 'getTodayTrainings']);
   });
