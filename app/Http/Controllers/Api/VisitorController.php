@@ -172,4 +172,26 @@ class VisitorController extends Controller
             'trainings' => $trainings,
         ]);
     }
+
+    /**
+     * Return list visitors by qr code_id
+     */
+    public function getVisitorByBadgeId(Request $request)
+    {
+        $validated = $request->validate([
+            'badge_id' => 'required|string',
+        ]);
+
+        $visitors = Visitor::with('visit')->where('badge_id', $validated['badge_id'])->get();
+
+        if ($visitors->isEmpty()) {
+            return response()->json([
+                'error' => 'Aucun visiteur trouvé avec cet QR code',
+            ], 404);
+        }
+
+        return response()->json([
+            'visitors' => $visitors,
+        ]);
+    }
 }
