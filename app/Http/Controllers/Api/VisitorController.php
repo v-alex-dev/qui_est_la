@@ -31,6 +31,7 @@ class VisitorController extends Controller
             [
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
+                'badge_id' => Str::uuid(),
             ]
         );
 
@@ -40,14 +41,13 @@ class VisitorController extends Controller
             'training_id' => $validated['training_id'] ?? null,
             'purpose' => $validated['purpose'],
             'entered_at' => now(),
-            'badge_id' => Str::uuid(),
         ]);
 
         return response()->json([
             'message' => 'Entrée enregistrée',
             'visit' => $visit,
             'visitor' => $visitor,
-            'badge_id' => $visit->badge_id,
+            'badge_id' => $visitor->badge_id,
         ]);
     }
 
@@ -60,13 +60,23 @@ class VisitorController extends Controller
             'badge_id' => 'required|string',
         ]);
 
-        $visit = Visit::where('badge_id', $validated['badge_id'])
+        // Trouver le visiteur par badge_id
+        $visitor = Visitor::where('badge_id', $validated['badge_id'])->first();
+
+        if (!$visitor) {
+            return response()->json([
+                'error' => 'Aucun visiteur trouvé avec cet ID de badge',
+            ], 404);
+        }
+
+        // Trouver la visite active (sans heure de sortie)
+        $visit = Visit::where('visitor_id', $visitor->id)
             ->whereNull('exited_at')
             ->first();
 
         if (!$visit) {
             return response()->json([
-                'error' => 'Aucune visite active trouvée avec cet ID',
+                'error' => 'Aucune visite active trouvée pour ce visiteur',
             ], 404);
         }
 
@@ -74,7 +84,7 @@ class VisitorController extends Controller
 
         return response()->json([
             'message' => 'Sortie enregistrée avec succès',
-            'visitor' => $visit->visitor,
+            'visitor' => $visitor,
             'exited_at' => $visit->exited_at,
         ]);
     }
@@ -91,29 +101,28 @@ class VisitorController extends Controller
             'training_id' => 'nullable|exists:trainings,id',
         ]);
 
-        // Vérifier si le visiteur existe et a déjà une visite
-        $existingVisit = Visit::where('badge_id', $validated['badge_id'])->first();
+        // Trouver le visiteur par badge_id
+        $visitor = Visitor::where('badge_id', $validated['badge_id'])->first();
 
-        if (!$existingVisit) {
+        if (!$visitor) {
             return response()->json([
-                'error' => 'Aucune visite trouvée avec cet ID',
+                'error' => 'Aucun visiteur trouvé avec cet ID de badge',
             ], 404);
         }
 
         // Créer une nouvelle visite pour le retour
         $newVisit = Visit::create([
-            'visitor_id' => $existingVisit->visitor_id,
+            'visitor_id' => $visitor->id,
             'staff_member_id' => $validated['staff_member_id'] ?? null,
             'training_id' => $validated['training_id'] ?? null,
             'purpose' => $validated['purpose'],
             'entered_at' => now(),
-            'badge_id' => $existingVisit->badge_id, // Même badge_id
         ]);
 
         return response()->json([
             'message' => 'Retour enregistré avec succès',
             'visit' => $newVisit,
-            'visitor' => $existingVisit->visitor,
+            'visitor' => $visitor,
         ]);
     }
 
@@ -182,17 +191,22 @@ class VisitorController extends Controller
             'badge_id' => 'required|string',
         ]);
 
-        $visit = Visit::with('visitor')->where('badge_id', $validated['badge_id'])->first();
+        $visitor = Visitor::where('badge_id', $validated['badge_id'])->first();
 
-        if (!$visit) {
+        if (!$visitor) {
             return response()->json([
-                'error' => 'Aucun visiteur trouvé avec ce QR code',
+                'error' => 'Aucun visiteur trouvé avec ce badge ID',
             ], 404);
         }
 
+        // Récupérer la dernière visite
+        $lastVisit = Visit::where('visitor_id', $visitor->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
         return response()->json([
-            'visitor' => $visit->visitor,
-            'visit' => $visit,
+            'visitor' => $visitor,
+            'last_visit' => $lastVisit,
         ]);
     }
 }
