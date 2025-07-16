@@ -182,16 +182,17 @@ class VisitorController extends Controller
             'badge_id' => 'required|string',
         ]);
 
-        $visitors = Visitor::with('visit')->where('badge_id', $validated['badge_id'])->get();
+        $visit = Visit::with('visitor')->where('badge_id', $validated['badge_id'])->first();
 
-        if ($visitors->isEmpty()) {
+        if (!$visit) {
             return response()->json([
-                'error' => 'Aucun visiteur trouvé avec cet QR code',
+                'error' => 'Aucun visiteur trouvé avec ce QR code',
             ], 404);
         }
 
         return response()->json([
-            'visitors' => $visitors,
+            'visitor' => $visit->visitor,
+            'visit' => $visit,
         ]);
     }
 }
