@@ -191,7 +191,6 @@ class VisitorController extends Controller
         }
 
         return response()->json([
-            'visitor' => $visit->visitor,
             'visit' => $visit,
         ]);
     }
