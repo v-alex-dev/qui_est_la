@@ -23,6 +23,45 @@
             </div>
           </div>
 
+          <!-- Barre de recherche -->
+          <div class="mb-6">
+            <form method="GET" action="{{ route('admin.history') }}" class="flex items-center space-x-4">
+              <div class="flex-1 relative">
+                <input
+                  type="text"
+                  name="search"
+                  value="{{ request('search') }}"
+                  placeholder="Rechercher par nom, email, formation, formateur, local..."
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Rechercher
+              </button>
+              @if(request('search'))
+              <a href="{{ route('admin.history') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Effacer
+              </a>
+              @endif
+            </form>
+          </div>
+
+          @if(request('search'))
+          <div class="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-blue-700">
+                  <span class="font-medium">{{ $histories->count() }} résultat(s)</span> trouvé(s) pour "<span class="font-medium">{{ request('search') }}</span>"
+                </p>
+              </div>
+            </div>
+          </div>
+          @endif
+
           <div class="bg-white shadow overflow-hidden sm:rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
